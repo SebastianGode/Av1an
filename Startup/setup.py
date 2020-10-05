@@ -49,8 +49,6 @@ def check_exes(args: Args):
         print('No ffmpeg')
         terminate()
 
-    validate_inputs(args)
-
     if args.chunk_method == 'vs_ffms2' and (not find_executable('vspipe')):
         print('vspipe executable not found')
         terminate()
@@ -74,7 +72,9 @@ def setup_encoder(args: Args):
         args.passes = encoder.default_passes
 
     args.video_params = encoder.default_args if args.video_params is None \
-    else shlex.split(args.video_params)
+        else shlex.split(args.video_params)
+
+    validate_inputs(args)
 
 
 def startup_check(args: Args):
@@ -162,5 +162,5 @@ def outputs_filenames(args: Args):
     :param args: the Args
     """
     suffix = '.mkv'
-    args.output_file = Path(f'{args.output_file}{suffix}') if args.output_file \
-                  else Path(f'{args.input.stem}_av1{suffix}')
+    args.output_file = Path(f'{args.output_file.stem}{suffix}') if args.output_file \
+                  else Path(f'{args.input.stem}_{args.encoder}{suffix}')
